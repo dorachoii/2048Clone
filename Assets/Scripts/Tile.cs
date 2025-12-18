@@ -1,6 +1,5 @@
 using UnityEngine;
 
-// tile null상태 될 수 있음 확인!
 public class Tile
 {
     public int value;

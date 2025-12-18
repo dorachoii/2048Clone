@@ -35,23 +35,31 @@ public class BoardManager : MonoBehaviour
     }
 
 
-
-
+    // 배열 좌표 -> 월드좌표
     public Vector2 CelltoWorld(int row, int col)
     {
         return new Vector2(leftX + col * cellSize, topY - row * cellSize);
     }
 
-    public void MoveLeft()
+    public void MoveRight() => MoveHorizontal(Direction.Right);
+    public void MoveLeft() => MoveHorizontal(Direction.Left);
+
+    void MoveHorizontal(Direction dir)
     {
-        for (int r = 0; r < row ; r++)
+        // 위에서 아래로 탐색
+        for(int r = 0; r < row; r++)
         {
             List<Tile> numbers = new List<Tile>();
-            for(int c = 0; c < col; c++)
+
+            int start = (dir == Direction.Left) ? 0 : col -1;
+            int end = (dir == Direction.Left) ? col : -1;
+            int step = (dir == Direction.Left) ? 1 : -1;
+
+            for(int c = start; c != end; c+= step)
             {
                 if(board[r,c] != null && board[r,c].value != 0)
                 {
-                    numbers.Add(board[r, c]);
+                    numbers.Add(board[r,c]);
                 }
             }
 
@@ -67,61 +75,21 @@ public class BoardManager : MonoBehaviour
             }
 
             int idx = 0;
-
-            for(int c = 0; c < col; c++)
+            for(int c = start; c!= end; c+= step)
             {
                 if(idx < numbers.Count)
                 {
-                    board[r, c] = numbers[idx];
-                    board[r, c].MoveTo(new Vector2Int(r, c));
+                    board[r,c] = numbers[idx];
+                    board[r,c].MoveTo(new Vector2Int(r,c));
                     idx++;
-                }else
+                }
+                else
                 {
-                    board[r, c] = null;
+                    board[r,c] = null;
                 }
             }
         }
-    }
 
-    public void MoveRight()
-    {
-        for (int r = 0; r < row ; r++)
-        {
-            List<Tile> numbers = new List<Tile>();
-            for(int c = col -1; c >= 0; c--)
-            {
-                if(board[r,c] != null && board[r,c].value != 0)
-                {
-                    numbers.Add(board[r, c]);
-                }
-            }
-
-            for(int i = 0; i < numbers.Count -1; i++)
-            {
-                if(numbers[i].value == numbers[i + 1].value)
-                {
-                    numbers[i].value *= 2;
-                    Destroy(numbers[i+1].tileObject);
-                    numbers[i].SetValue(numbers[i].value);
-                    numbers.RemoveAt(i+1);
-                }
-            }
-
-            int idx = 0;
-
-            for(int c = col -1; c >= 0; c--)
-            {
-                if(idx < numbers.Count )
-                {
-                    board[r, c] = numbers[idx];
-                    board[r, c].MoveTo(new Vector2Int(r, c));
-                    idx++;
-                }else
-                {
-                    board[r, c] = null;
-                }
-            }
-        }
     }
     
     public void MoveUp()
