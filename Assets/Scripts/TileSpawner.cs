@@ -8,6 +8,8 @@ public class TileSpawner : MonoBehaviour
 
     void Start()
     {
+        BoardManager.Instance.OnMoveEnd += SpawnRandomTile;
+
         for(int r = 0; r < BoardManager.row; r++)
         {
             for(int c = 0; c < BoardManager.col; c++)
@@ -17,7 +19,6 @@ public class TileSpawner : MonoBehaviour
         }
         SpawnTileAt(2, 2);
         SpawnTileAt(3, 3);
-        SpawnRandomTile();
     }
 
     void SpawnTileAt(int row, int col)
@@ -28,6 +29,7 @@ public class TileSpawner : MonoBehaviour
         // value값도 나중에 조정되어야 함
         Tile tile = new Tile(2, new Vector2Int(row, col), tileObj);
         BoardManager.Instance.board[row, col] = tile;
+        Debug.Log($"생성 타일:{row},{col}");
     }
 
     public void SpawnRandomTile()

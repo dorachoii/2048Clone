@@ -23,6 +23,9 @@ public class BoardManager : MonoBehaviour
 
     public Tile[,] board = new Tile[row, col];
 
+    public delegate void MoveEndDelegate();
+    public event MoveEndDelegate OnMoveEnd;
+
 
     private void Awake()
     {
@@ -48,6 +51,8 @@ public class BoardManager : MonoBehaviour
 
     void MoveHorizontal(Direction dir)
     {
+        bool moved = false;
+
         // 위에서 아래로 탐색
         for (int r = 0; r < row; r++)
         {
@@ -61,11 +66,13 @@ public class BoardManager : MonoBehaviour
             {
                 if (board[r, c] != null && board[r, c].value != 0)
                 {
+                    Debug.Log($"현재 보드의 타일:{r},{c}");
                     numbers.Add(board[r, c]);
                 }
             }
 
             numbers = Merge(numbers);
+            
 
             int idx = 0;
             for (int c = start; c != end; c += step)
@@ -82,6 +89,8 @@ public class BoardManager : MonoBehaviour
                 }
             }
         }
+
+        Debug.Log("OnMoveEnd");
     }
 
     void MoveVertical(Direction dir)
@@ -119,9 +128,8 @@ public class BoardManager : MonoBehaviour
                     board[r, c] = null;
                 }
             }
-
-            
         }
+        OnMoveEnd?.Invoke();
     }
 
     List<Tile> Merge(List<Tile> numbers)
