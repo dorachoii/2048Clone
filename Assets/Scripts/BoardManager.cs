@@ -63,16 +63,7 @@ public class BoardManager : MonoBehaviour
                 }
             }
 
-            for(int i = 0; i < numbers.Count -1; i++)
-            {
-                if(numbers[i].value == numbers[i + 1].value)
-                {
-                    numbers[i].value *= 2;
-                    Destroy(numbers[i+1].tileObject);
-                    numbers[i].SetValue(numbers[i].value);
-                    numbers.RemoveAt(i+1);
-                }
-            }
+            numbers = Merge(numbers);
 
             int idx = 0;
             for(int c = start; c!= end; c+= step)
@@ -89,7 +80,21 @@ public class BoardManager : MonoBehaviour
                 }
             }
         }
+    }
 
+    List<Tile> Merge(List<Tile> numbers)
+    {
+        for(int i = 0; i< numbers.Count-1 ; i++)
+        {
+            if(numbers[i].value == numbers[i + 1].value)
+            {
+                numbers[i].value *= 2;
+                Destroy(numbers[i+1].tileObject);
+                numbers[i].SetValue(numbers[i].value);
+                numbers.RemoveAt(i+1);
+            }
+        }
+        return numbers;
     }
     
     public void MoveUp()
