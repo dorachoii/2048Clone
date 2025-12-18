@@ -43,6 +43,8 @@ public class BoardManager : MonoBehaviour
 
     public void MoveRight() => MoveHorizontal(Direction.Right);
     public void MoveLeft() => MoveHorizontal(Direction.Left);
+    public void MoveUp() => MoveVertical(Direction.Up);
+    public void MoveDown() => MoveVertical(Direction.Down);
 
     void MoveHorizontal(Direction dir)
     {
@@ -55,7 +57,7 @@ public class BoardManager : MonoBehaviour
             int end = (dir == Direction.Left) ? col : -1;
             int step = (dir == Direction.Left) ? 1 : -1;
 
-            for(int c = start; c != end; c+= step)
+            for(int c = start; c != end; c += step)
             {
                 if(board[r,c] != null && board[r,c].value != 0)
                 {
@@ -82,6 +84,46 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    void MoveVertical(Direction dir)
+    {
+        // 왼쪽에서 오른쪽으로 탐색
+        for(int c = 0; c < col; c++)
+        {
+            List<Tile> numbers = new List<Tile>();
+
+            int start = (dir == Direction.Up) ? 0 : row -1 ;
+            int end = (dir == Direction.Up) ? row : -1;
+            int step = (dir == Direction.Up) ? 1: -1;
+
+            for(int r = start; r != end; r += step)
+            {
+                if(board[r,c] != null && board[r,c].value != 0)
+                {
+                    numbers.Add(board[r,c]);
+                }
+            }
+
+            numbers = Merge(numbers);
+
+            int idx = 0;
+            for(int r = start; r != end; r += step)
+            {
+                if(idx < numbers.Count)
+                {
+                    board[r,c] = numbers[idx];
+                    board[r,c].MoveTo(new Vector2Int(r,c));
+                    idx++;
+                }
+                else
+                {
+                    board[r,c] = null;
+                }
+            }
+
+
+        }
+    }
+
     List<Tile> Merge(List<Tile> numbers)
     {
         for(int i = 0; i< numbers.Count-1 ; i++)
@@ -95,76 +137,5 @@ public class BoardManager : MonoBehaviour
             }
         }
         return numbers;
-    }
-    
-    public void MoveUp()
-    {
-        for (int c = 0; c < col ; c++)
-        {
-            List<Tile> numbers = new List<Tile>();
-            for(int r = 0; r < row; r++)
-            {
-                if(board[r,c] != null && board[r,c].value != 0)
-                {
-                    numbers.Add(board[r, c]);
-                }
-            }
-
-            for(int i = 0; i < numbers.Count -1; i++)
-            {
-                if(numbers[i].value == numbers[i + 1].value)
-                {
-                    numbers[i].value *= 2;
-                    Destroy(numbers[i+1].tileObject);
-                    numbers[i].SetValue(numbers[i].value);
-                    numbers.RemoveAt(i+1);
-                }
-            }
-
-            int idx = 0;
-
-            for(int r = 0; r < row; r++)
-            {
-                if(idx < numbers.Count)
-                {
-                    board[r, c] = numbers[idx];
-                    board[r, c].MoveTo(new Vector2Int(r, c));
-                    idx++;
-                }else
-                {
-                    board[r, c] = null;
-                }
-            }
-        }
-    }
-    
-    public void MoveDown()
-    {
-        for (int c = 0; c < col ; c++)
-        {
-            List<Tile> numbers = new List<Tile>();
-            for(int r = row-1; r >= 0; r--)
-            {
-                if(board[r,c] != null && board[r,c].value != 0)
-                {
-                    numbers.Add(board[r, c]);
-                }
-            }
-
-            int idx = 0;
-
-            for(int r = row-1; r >= 0; r--)
-            {
-                if(idx < numbers.Count)
-                {
-                    board[r, c] = numbers[idx];
-                    board[r, c].MoveTo(new Vector2Int(r, c));
-                    idx++;
-                }else
-                {
-                    board[r, c] = null;
-                }
-            }
-        }
     }
 }
