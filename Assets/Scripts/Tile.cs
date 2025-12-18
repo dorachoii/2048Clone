@@ -4,7 +4,7 @@ public class Tile
 {
     public int value;
     public Vector2Int cellPos;
-    
+
     public GameObject tileObject;
 
     public Tile(int val, Vector2Int cPos, GameObject obj)
@@ -26,13 +26,21 @@ public class Tile
     {
         value = newValue;
 
-        if(tileObject != null)
+        if (tileObject != null)
         {
             var text = tileObject.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-            if(text != null)
-            {
-                text.text = value.ToString();
-            }
+            text.text = value.ToString();
+
+            var sp = tileObject.GetComponentInChildren<SpriteRenderer>();
+            var baseColor = sp.color;
+
+            // 추후 수정
+            float factor = 1f / Mathf.Log(value, 2);
+            sp.color = new Color(
+                baseColor.r * factor,
+                baseColor.g * factor,
+                baseColor.b * factor
+            );
         }
     }
 }
